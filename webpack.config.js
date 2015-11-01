@@ -1,11 +1,22 @@
-var ExtractTextPlugin = require('extract-text-webpack-plugin'),
-  webpack = require('webpack');
+const ExtractTextPlugin = require('extract-text-webpack-plugin'),
+  ManifestPlugin = require('webpack-manifest-plugin'),
+  webpack = require('webpack'),
+
+  dev = {
+    css: '[name].css',
+    js: '[name].js'
+  },
+  prod = {
+    css: '[name].[hash].css',
+    js: '[name].[hash].js'
+  },
+  opts = process.env.NODE_ENV === 'production' ? prod : dev;
 
 module.exports = {
   entry: './app.jsx',
   output: {
     path: './dist/',
-    filename: 'bundle.js'
+    filename: opts.js
   },
   externals: {
     react: 'React',
@@ -22,10 +33,11 @@ module.exports = {
     }]
   },
   plugins: [
-    new ExtractTextPlugin('style.css'),
+    new ExtractTextPlugin(opts.css),
     new webpack.ProvidePlugin({
       'fetch': 'imports?this=>global!exports?global.fetch!whatwg-fetch'
-    })
+    }),
+    new ManifestPlugin({})
   ],
   devtool: 'source-map'
 };
