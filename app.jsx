@@ -207,6 +207,11 @@ class NewCurrencyInput extends React.Component {
         );
       });
     let listOpts = this.props.currencies
+      .sort(function(a, b) {
+        if(a.code < b.code) return -1;
+        if(a.code > b.code) return 1;
+        return 0;
+      })
       .map(currency => {
         return (
           <option key={currency.code} value={currency.code}>{currency.code} {currency.name}</option>
