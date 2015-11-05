@@ -1,11 +1,13 @@
 @import url(https://fonts.googleapis.com/css?family=Roboto:400,300);
 @import url(https://fonts.googleapis.com/css?family=Roboto+Mono);
 
-$color-text: rgba(0, 0, 0, 0.8);
-$color-text-focus: #00A3E2;
-$color-hover: #C7DCE6;
+$color-background: #EFE8DA;
+$color-hover: #C6E5D9;
+$color-text: #485D68;
+$color-text-focus: #45ADA8;
 
 body {
+  background-color: $color-background;
   color: $color-text;
   display: flex;
   font-family: Roboto, Arial, sans-serif;
@@ -25,7 +27,7 @@ main {
 }
 
 section {
-  background-color: rgba(#000, 0.04);
+  background-color: rgba(#000, 0.02);
   border-radius: 3px;
   display: flex;
   flex-direction: column;
@@ -79,11 +81,9 @@ section {
 
 .new-currency-list {
   background-color: #fff;
-  border-bottom-left-radius: 3px;
-  border-bottom-right-radius: 3px;
-  border: 1px solid rgba(0, 0, 0, 0.1);
+  border-radius: 3px;
   bottom: 100%;
-  box-shadow: 1px 1px 1px 0 rgba(#000, 0.02);
+  box-shadow: 1px 1px 8px 0 rgba(#000, 0.06);
   color: rgba(#000, 0.87);
   font-size: 0;
   left: 0;
@@ -191,8 +191,7 @@ $new-currency-list-item-code-width: 80px;
 
 .currency-more-menu {
   background-color: #fff;
-  border: 1px solid rgba(#000, 0.1);
-  box-shadow: 1px 1px 1px 0 rgba(#000, 0.02);
+  box-shadow: 1px 1px 8px 0 rgba(#000, 0.06);
   font-size: 16px;
   opacity: 0;
   padding: 6px 0;
