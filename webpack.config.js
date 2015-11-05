@@ -4,11 +4,21 @@ const ExtractTextPlugin = require('extract-text-webpack-plugin'),
 
   dev = {
     css: '[name].css',
-    js: '[name].js'
+    js: '[name].js',
+    plugins: [],
+    styleLoader: 'style-loader!css-loader!autoprefixer-loader?browsers=last 2 versions!sass-loader'
   },
   prod = {
     css: '[name].[hash].css',
-    js: '[name].[hash].js'
+    js: '[name].[hash].js',
+    plugins: [
+      new ExtractTextPlugin('[name].[hash].css'),
+      new webpack.ProvidePlugin({
+        'fetch': 'imports?this=>global!exports?global.fetch!whatwg-fetch'
+      }),
+      new ManifestPlugin({})
+    ],
+    styleLoader: ExtractTextPlugin.extract('style-loader', 'css-loader!autoprefixer-loader?browsers=last 2 versions!sass-loader'),
   },
   opts = process.env.NODE_ENV === 'production' ? prod : dev;
 
@@ -29,15 +39,9 @@ module.exports = {
       loader: 'babel'
     }, {
       test: /\.scss$/,
-      loader:  ExtractTextPlugin.extract('style-loader', 'css-loader!autoprefixer-loader?browsers=last 2 versions!sass-loader')
+      loader: opts.styleLoader
     }]
   },
-  plugins: [
-    new ExtractTextPlugin(opts.css),
-    new webpack.ProvidePlugin({
-      'fetch': 'imports?this=>global!exports?global.fetch!whatwg-fetch'
-    }),
-    new ManifestPlugin({})
-  ],
+  plugins: opts.plugins,
   devtool: 'source-map'
 };
