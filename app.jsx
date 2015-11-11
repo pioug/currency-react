@@ -108,11 +108,21 @@ class Currencies extends React.Component {
       from: 'EUR'
     };
 
+    try {
+      let prevState = JSON.parse(localStorage.getItem('state'));
+      Object.assign(this.state, prevState);
+    } catch(e) {
+      console.error(e);
+    }
+
     fetch(endPoint + 'currencies')
       .then(response => response.json())
       .then(data => {
         this.setState({ currencies: data });
       });
+  }
+  componentDidUpdate() {
+    localStorage.setItem('state', JSON.stringify(this.state));
   }
   changeBase(convert, from) {
     this.setState({
