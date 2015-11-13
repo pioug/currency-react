@@ -1,6 +1,7 @@
 const gulp = require('gulp'),
   exec = require('child_process').exec,
   htmlreplace = require('gulp-html-replace'),
+  rev = require('gulp-rev'),
   revReplace = require('gulp-rev-replace');
 
 gulp.task('webpack', function(next) {
@@ -8,7 +9,7 @@ gulp.task('webpack', function(next) {
 });
 
 gulp.task('index', ['webpack'], function() {
-  gulp.src('index.html')
+  return gulp.src('index.html')
     .pipe(htmlreplace({
       react: [
         'https://cdnjs.cloudflare.com/ajax/libs/react/0.14.1/react.min.js',
@@ -16,13 +17,32 @@ gulp.task('index', ['webpack'], function() {
       ]
     }))
   .pipe(revReplace({
-    manifest: gulp.src('dist/manifest.json')
+    manifest: gulp.src('dist/manifest-webpack.json')
   }))
   .pipe(gulp.dest('dist/'));
 });
+
+gulp.task('images', function() {
+  return gulp.src('images/**/*', { base: '.' })
+    .pipe(rev())
+    .pipe(gulp.dest('dist/'))
+    .pipe(rev.manifest({
+      path: 'manifest-images.json'
+    }))
+    .pipe(gulp.dest('dist/'));
+});
+
+gulp.task('manifest', ['images'], function() {
+  return gulp.src('manifest.json')
+    .pipe(revReplace({
+      replaceInExtensions: ['.json'],
+      manifest: gulp.src('dist/manifest-images.json')
+    }))
+   .pipe(gulp.dest('dist/'));
+})
 
 gulp.task('default', function(next) {
   exec('./node_modules/webpack-dev-server/bin/webpack-dev-server.js --hot --inline --host 0.0.0.0');
 });
 
-gulp.task('build', ['index']);
+gulp.task('build', ['index', 'images', 'manifest']);

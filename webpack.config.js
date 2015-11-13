@@ -16,7 +16,9 @@ const ExtractTextPlugin = require('extract-text-webpack-plugin'),
       new webpack.ProvidePlugin({
         'fetch': 'imports?this=>global!exports?global.fetch!whatwg-fetch'
       }),
-      new ManifestPlugin({})
+      new ManifestPlugin({
+        fileName: 'manifest-webpack.json',
+      })
     ],
     styleLoader: ExtractTextPlugin.extract('style-loader', 'css-loader!autoprefixer-loader?browsers=last 2 versions!sass-loader'),
   },
