@@ -1,4 +1,5 @@
 const gulp = require('gulp'),
+  del = require('del'),
   exec = require('child_process').exec,
   htmlreplace = require('gulp-html-replace'),
   rev = require('gulp-rev'),
@@ -43,6 +44,10 @@ gulp.task('manifest', ['images'], function() {
 
 gulp.task('default', function(next) {
   exec('./node_modules/webpack-dev-server/bin/webpack-dev-server.js --hot --inline --host 0.0.0.0');
+});
+
+gulp.task('clean', function() {
+  return del('dist');
 });
 
 gulp.task('build', ['index', 'images', 'manifest']);
