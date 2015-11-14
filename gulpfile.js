@@ -12,6 +12,9 @@ gulp.task('webpack', function(next) {
 gulp.task('index', ['webpack'], function() {
   return gulp.src('index.html')
     .pipe(htmlreplace({
+      style: [
+        'main.css'
+      ],
       react: [
         'https://cdnjs.cloudflare.com/ajax/libs/react/0.14.1/react.min.js',
         'https://cdnjs.cloudflare.com/ajax/libs/react/0.14.1/react-dom.min.js'

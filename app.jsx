@@ -231,8 +231,8 @@ class NewCurrencyInput extends React.Component {
       <section className='new-currency'>
         <input className='new-currency-input' type='text' placeholder='add a currency' ref='input' onChange={this.filterList.bind(this)}/>
         <div className='new-currency-list'>{list}</div>
-        <select className='new-currency-select' ref='select' onChange={this.addCurrencyFromSelect.bind(this)}>
-          <option value='none' disabled selected>add a currency</option>
+        <select className='new-currency-select' ref='select' onChange={this.addCurrencyFromSelect.bind(this)} defaultValue='none'>
+          <option value='none' disabled>add a currency</option>
           {listOpts}
         </select>
       </section>
