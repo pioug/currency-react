@@ -254,7 +254,7 @@ class Currencies extends React.Component {
     return (
       <div>
         <section>{list}</section>
-        <NewCurrencyInput addedCurrencies={this.state.currencies} onNewCurrency={this.onNewCurrency.bind(this)} currencies={this.state.currencies} />
+        <NewCurrencyInput addedCurrencies={this.state.addedCurrencies} onNewCurrency={this.onNewCurrency.bind(this)} currencies={this.state.currencies} />
       </div>
     );
   }
@@ -286,7 +286,7 @@ class NewCurrencyInput extends React.Component {
       })
       .map(currency => {
         let klass = this.props.addedCurrencies.indexOf(currency.code) > -1 ? 'active' : '';
-        klass += ' new-currency-list-item'
+        klass += ' new-currency-list-item';
         return (
           <div key={currency.code} className={klass} onClick={this.addCurrency.bind(this, currency)}>
             <span className='new-currency-list-item-code'>{currency.code}</span>
