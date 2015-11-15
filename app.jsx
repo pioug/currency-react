@@ -54,6 +54,15 @@ class CurrencyInput extends React.Component {
   componentWillMount() {
     this.updateValue(this.props);
   }
+
+  getBoundingClientRect() {
+    return this.refs.fieldset.getBoundingClientRect();
+  }
+
+  mousedown() {
+    this.props.startMove(this.props.to);
+  }
+
   render() {
     let value,
       klass;
@@ -75,9 +84,9 @@ class CurrencyInput extends React.Component {
     }
 
     return (
-      <fieldset>
+      <fieldset ref='fieldset'>
         <input type='tel' className='currency-input' value={value} onChange={this.recalc.bind(this)} />
-        <label>{this.props.to}</label>
+        <label onMouseDown={this.mousedown.bind(this)} onTouchStart={this.mousedown.bind(this)}>{this.props.to}</label>
         <div className={klass} ref='dropdown'>
           <a className='currency-more-open' onClick={this.showMenu.bind(this)}>&middot;</a>
           <div className='currency-more-menu'>
@@ -161,9 +170,77 @@ class Currencies extends React.Component {
       addedCurrencies: addedCurrencies
     });
   }
+
+  startMove(currency) {
+    const mousemoveFn = mousemove.bind(this),
+      mouseupFn = mouseup.bind(this),
+      touchmoveFn = touchmove.bind(this),
+      self = this;
+
+    document.body.classList.add('moving');
+    document.addEventListener('mousemove', mousemoveFn);
+    document.addEventListener('touchmove', touchmoveFn);
+    document.addEventListener('mouseup', mouseupFn);
+    document.addEventListener('touchend', mouseupFn);
+
+    function touchmove(event) {
+      locate(event.touches[0].pageX, event.touches[0].pageY);
+    }
+
+    function mousemove(event) {
+      locate(event.x, event.y);
+    }
+
+    function mouseup() {
+      document.body.classList.remove('moving');
+      document.removeEventListener('mousemove', mousemoveFn);
+      document.removeEventListener('mouseup', mouseupFn);
+      document.removeEventListener('touchmove', touchmoveFn);
+      document.removeEventListener('touchend', mouseupFn);
+    }
+
+    function locate(x, y) {
+      let rects = Object.keys(self.refs).map((value, index) => {
+          let rect = self.refs[value].getBoundingClientRect();
+          rect.currency = value;
+          return rect;
+        }),
+        location = rects.find((rect) => {
+          return rect.top <= y && rect.bottom >= y;
+        });
+
+      if (!location && rects[0].bottom >= y) {
+        move(currency, 'top');
+      } else if (!location && rects[rects.length - 1].top <= y) {
+        move(currency, 'bottom');
+      } else if (location  && location.currency !== currency) {
+        move(currency, location.currency);
+      }
+    }
+
+    function move(source, dest, below) {
+      let currencies = self.state.addedCurrencies.slice(),
+        index = currencies.indexOf(source),
+        newIndex;
+
+      if (dest === 'top') {
+        newIndex = 0;
+      } else if (dest === 'bottom') {
+        newIndex = currencies.length;
+      } else if (dest) {
+        newIndex = currencies.indexOf(dest);
+      }
+
+      currencies.splice(index, 1);
+      currencies.splice(newIndex, 0, source);
+      self.setState({ addedCurrencies: currencies });
+    }
+  }
+
   render() {
     let list = this.state.addedCurrencies.map(currency =>
       <CurrencyInput
+        ref={currency}
         key={currency}
         convert={this.state.convert}
         from={this.state.from}
@@ -171,12 +248,13 @@ class Currencies extends React.Component {
         changeBase={this.changeBase.bind(this)}
         remove={this.remove.bind(this)}
         moveDown={this.moveDown.bind(this)}
-        moveUp={this.moveUp.bind(this)} />
+        moveUp={this.moveUp.bind(this)}
+        startMove={this.startMove.bind(this)} />
     );
     return (
       <div>
         <section>{list}</section>
-        <NewCurrencyInput addedCurrencies={this.state.currencies} onNewCurrency={this.onNewCurrency.bind(this)} currencies={this.state.currencies}/>
+        <NewCurrencyInput addedCurrencies={this.state.currencies} onNewCurrency={this.onNewCurrency.bind(this)} currencies={this.state.currencies} />
       </div>
     );
   }
